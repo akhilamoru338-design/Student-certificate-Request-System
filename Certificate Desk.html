@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Certificate Desk</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f7;--surface:#fff;--ink:#14213d;--muted:#5d6b82;--line:#d5dce8;--brand:#2f3fbf;--ok:#1b7a4b;--okbg:#e0f3e8;--no:#b3261e;--nobg:#fbe5e3;--wait:#9a6700;--waitbg:#fff1cc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--surface:#18223a;--ink:#e8edf8;--muted:#9aa8c4;--line:#2b3856;--brand:#8b9bff;--ok:#5fd699;--okbg:#12362a;--no:#ff8f86;--nobg:#3d1b1a;--wait:#f2c14e;--waitbg:#3a2e0e}}
+:root[data-theme="dark"]{--bg:#0f1626;--surface:#18223a;--ink:#e8edf8;--muted:#9aa8c4;--line:#2b3856;--brand:#8b9bff;--ok:#5fd699;--okbg:#12362a;--no:#ff8f86;--nobg:#3d1b1a;--wait:#f2c14e;--waitbg:#3a2e0e}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+h1{font-size:1.7rem;font-weight:800;margin:0;letter-spacing:-.02em}
+h2{font-size:1.05rem;margin:0 0 10px;font-weight:600}
+.sub{color:var(--muted);font-size:.9rem;margin:2px 0 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;color:var(--muted);padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--brand);color:#fff}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;border-left-width:5px}
+.stat b{display:block;font-size:1.8rem;line-height:1.1}
+.stat span{color:var(--muted);font-size:.85rem}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+select,input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:8px;padding:9px 16px;cursor:pointer;background:var(--brand);color:#fff}
+.btn.ok{background:var(--ok);color:#fff}.btn.no{background:var(--no);color:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn.ok,:root:not([data-theme="light"]) .btn.no,:root:not([data-theme="light"]) .btn,:root:not([data-theme="light"]) .seg button[aria-pressed=true]{color:#0f1626}}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.8rem;font-weight:600}
+.Pending{background:var(--waitbg);color:var(--wait)}.Approved{background:var(--okbg);color:var(--ok)}.Rejected{background:var(--nobg);color:var(--no)}
+.req{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:var(--bg)}
+.req.Pending{border-left:5px solid var(--wait)}.req.Approved{border-left:5px solid var(--ok)}.req.Rejected{border-left:5px solid var(--no)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.meta{color:var(--muted);font-size:.85rem}
+.reason{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--nobg);color:var(--no);font-size:.9rem}
+.checks{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chk{font-size:.8rem;padding:3px 9px;border-radius:6px;border:1px solid var(--line)}
+.chk.y{background:var(--okbg);color:var(--ok);border-color:transparent}.chk.n{background:var(--nobg);color:var(--no);border-color:transparent}
+.act{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:520px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+.empty{color:var(--muted);padding:14px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;display:none}
+.err{color:var(--no);font-size:.85rem;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>Certificate Desk</h1><p class="sub">Request bonafide, study or conduct certificates and track every decision.</p></div>
+  <div class="seg" role="group" aria-label="Choose role">
+    <button id="r-student" aria-pressed="true">Student</button>
+    <button id="r-office" aria-pressed="false">Office</button>
+  </div>
+</header>
+<section class="stats" id="stats"></section>
+<main id="view"></main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+var KEY="certdesk-v1";
+var seed={students:[
+ {id:"S101",name:"Ananya Reddy",year:"3",section:"A",branch:"CSE",paid:true,attendance:88,conduct:true},
+ {id:"S102",name:"Kiran Kumar",year:"2",section:"B",branch:"ECE",paid:false,attendance:81,conduct:true},
+ {id:"S103",name:"Priya Varma",year:"4",section:"C",branch:"MECH",paid:true,attendance:68,conduct:true},
+ {id:"S104",name:"Rahul Naidu",year:"1",section:"A",branch:"CIVIL",paid:true,attendance:92,conduct:false}],
+ requests:[
+ {id:1,sid:"S101",type:"Bonafide",status:"Pending",faculty:"",reason:"",date:"2026-11-05"},
+ {id:2,sid:"S102",type:"Study",status:"Pending",faculty:"",reason:"",date:"2026-11-06"},
+ {id:3,sid:"S103",type:"Conduct",status:"Rejected",faculty:"Attendance below 75%.",reason:"Attendance is 68%, below the 75% minimum. Please clear the shortage first.",date:"2026-11-01"}],
+ nextId:4};
+var db,role="student",me="S101";
+try{var s=localStorage.getItem(KEY);db=s?JSON.parse(s):null}catch(e){db=null}
+if(!db)db=JSON.parse(JSON.stringify(seed));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function stu(id){return db.students.filter(function(x){return x.id===id})[0]}
+function toast(m){var t=$("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2200)}
+function checks(s){
+ return [[s.paid,"Fees cleared","Fees pending"],[s.attendance>=75,"Attendance "+s.attendance+"%","Attendance "+s.attendance+"% (min 75%)"],[s.conduct,"No disciplinary record","Disciplinary record"]]
+ .map(function(c){return '<span class="chk '+(c[0]?"y":"n")+'">'+(c[0]?"✓ ":"✗ ")+c[ c[0]?1:2 ]+'</span>'}).join("")}
+function eligible(s){return s.paid&&s.attendance>=75&&s.conduct}
+
+function stats(){
+ var c={Pending:0,Approved:0,Rejected:0};
+ db.requests.forEach(function(r){c[r.status]++});
+ var col={Pending:"var(--wait)",Approved:"var(--ok)",Rejected:"var(--no)"};
+ $("stats").innerHTML=["Pending","Approved","Rejected"].map(function(k){return '<div class="stat" style="border-left-color:'+col[k]+'"><b>'+c[k]+'</b><span>'+k+'</span></div>'}).join("")+
+ '<div class="stat" style="border-left-color:var(--brand)"><b>'+db.students.length+'</b><span>Students</span></div>';
+}
+
+function reqCard(r,office){
+ var s=stu(r.sid);
+ var h='<div class="req '+r.status+'"><div class="row"><div><strong>'+esc(r.type)+' certificate</strong>'+(office?' for '+esc(s.name):'')+'<div class="meta">Requested '+esc(r.date)+' · #'+r.id+'</div></div><span class="badge '+r.status+'">'+r.status+'</span></div>';
+ if(office){
+  h+='<div class="meta">'+esc(s.id)+' · Year '+esc(s.year)+' · Section '+esc(s.section)+' · '+esc(s.branch)+'</div><div class="checks">'+checks(s)+'</div>';
+ }
+ if(r.faculty)h+='<div class="meta">Faculty note: '+esc(r.faculty)+'</div>';
+ if(r.status==="Rejected")h+='<div class="reason"><strong>Reason for rejection:</strong> '+esc(r.reason)+'</div>';
+ if(office&&r.status==="Pending"){
+  h+='<label for="f'+r.id+'">Faculty consultation note</label><input id="f'+r.id+'" placeholder="e.g. Recommended by class coordinator">'+
+  '<div class="act"><button class="btn ok" data-a="approve" data-id="'+r.id+'"'+(eligible(s)?'':' disabled title="Student is not eligible"')+'>Approve</button>'+
+  '<button class="btn no" data-a="reject" data-id="'+r.id+'">Reject</button></div>'+
+  '<div id="rj'+r.id+'" style="display:none"><label for="rt'+r.id+'">Reason for rejection (required)</label><textarea id="rt'+r.id+'" rows="2"></textarea><div class="err" id="re'+r.id+'"></div><div class="act"><button class="btn no" data-a="confirm" data-id="'+r.id+'">Confirm rejection</button></div></div>';
+  if(!eligible(s))h+='<div class="meta" style="margin-top:6px">Approval is locked until all eligibility checks pass.</div>';
+ }
+ return h+'</div>';
+}
+
+function render(){
+ stats();
+ $("r-student").setAttribute("aria-pressed",role==="student");
+ $("r-office").setAttribute("aria-pressed",role==="office");
+ var v=$("view"),h="";
+ if(role==="student"){
+  var s=stu(me),mine=db.requests.filter(function(r){return r.sid===me}).slice().reverse();
+  h='<div class="grid"><section class="panel"><h2>My details</h2><label for="who">Student</label><select id="who">'+db.students.map(function(x){return '<option value="'+x.id+'"'+(x.id===me?' selected':'')+'>'+esc(x.name)+' ('+x.id+')</option>'}).join("")+'</select>'+
+  '<p class="meta" style="margin:10px 0 0">Year '+esc(s.year)+' · Section '+esc(s.section)+' · '+esc(s.branch)+'</p>'+
+  '<p class="meta" style="margin:4px 0 0">Payment: <strong style="color:'+(s.paid?'var(--ok)':'var(--no)')+'">'+(s.paid?'Clear':'Not clear')+'</strong></p>'+
+  '<h2 style="margin-top:18px">New request</h2><label for="ctype">Certificate</label><select id="ctype"><option>Bonafide</option><option>Study</option><option>Conduct</option></select>'+
+  '<div class="act"><button class="btn" id="submit">Submit request</button></div></section>'+
+  '<section class="panel"><h2>My requests</h2>'+(mine.length?mine.map(function(r){return reqCard(r,false)}).join(""):'<div class="empty">No requests yet. Choose a certificate and submit one.</div>')+'</section></div>';
+ }else{
+  var q=db.requests.filter(function(r){return r.status==="Pending"}),d=db.requests.filter(function(r){return r.status!=="Pending"}).slice().reverse();
+  h='<div class="grid" style="grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)"><section class="panel"><h2>Awaiting decision</h2>'+(q.length?q.map(function(r){return reqCard(r,true)}).join(""):'<div class="empty">All caught up. No pending requests.</div>')+'</section>'+
+  '<section class="panel"><h2>Decided</h2>'+(d.length?d.map(function(r){return reqCard(r,true)}).join(""):'<div class="empty">No decisions yet.</div>')+'</section></div>'+
+  '<section class="panel" style="margin-top:16px"><h2>Student records</h2><div class="tbl"><table><thead><tr><th>ID</th><th>Name</th><th>Year</th><th>Section</th><th>Branch</th><th>Payment</th><th>Eligible</th></tr></thead><tbody>'+
+  db.students.map(function(x){return '<tr><td>'+x.id+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.year)+'</td><td>'+esc(x.section)+'</td><td>'+esc(x.branch)+'</td><td>'+(x.paid?'Clear':'Not clear')+'</td><td>'+(eligible(x)?'Yes':'No')+'</td></tr>'}).join("")+'</tbody></table></div>'+
+  '<h2 style="margin-top:18px">Add student</h2><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr))"><div><label for="ns">Name</label><input id="ns"></div><div><label for="ny">Year</label><input id="ny" type="number" min="1" max="4" value="1"></div><div><label for="nc">Section</label><input id="nc" value="A"></div><div><label for="nb">Branch</label><input id="nb" value="CSE"></div><div><label for="np">Payment</label><select id="np"><option value="1">Clear</option><option value="0">Not clear</option></select></div></div><div class="act"><button class="btn" id="addstu">Add student</button></div></section>';
+ }
+ v.innerHTML=h;
+}
+
+document.addEventListener("click",function(e){
+ var b=e.target.closest("button");if(!b)return;
+ if(b.id==="r-student"){role="student";render();return}
+ if(b.id==="r-office"){role="office";render();return}
+ if(b.id==="submit"){db.requests.push({id:db.nextId++,sid:me,type:$("ctype").value,status:"Pending",faculty:"",reason:"",date:new Date().toISOString().slice(0,10)});save();render();toast("Request submitted");return}
+ if(b.id==="addstu"){var n=$("ns").value.trim();if(!n){toast("Enter the student's name");return}
+  db.students.push({id:"S"+(101+db.students.length),name:n,year:$("ny").value,section:$("nc").value||"A",branch:$("nb").value||"CSE",paid:$("np").value==="1",attendance:85,conduct:true});save();render();toast("Student added");return}
+ var id=+b.getAttribute("data-id"),a=b.getAttribute("data-a");if(!a)return;
+ var r=db.requests.filter(function(x){return x.id===id})[0];
+ var fn=$("f"+id);if(fn)r.faculty=fn.value.trim();
+ if(a==="approve"){r.status="Approved";save();render();toast("Request approved")}
+ if(a==="reject"){$("rj"+id).style.display="block";$("rt"+id).focus()}
+ if(a==="confirm"){var t=$("rt"+id).value.trim();if(!t){$("re"+id).textContent="Add a reason so the student knows what to fix.";return}
+  r.status="Rejected";r.reason=t;save();render();toast("Request rejected")}
+});
+document.addEventListener("change",function(e){if(e.target.id==="who"){me=e.target.value;render()}});
+render();
+</script>
+</body>
+</html>
